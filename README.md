@@ -1,15 +1,13 @@
 **IMPORTANT: Italian support is currently not available. I will, however, be implementing it soon.**
-
+Also: I recommend using a virtual enviornment to install the packages and run the script, otherwise it may not work.
 Raspberry Pi’s newest OS (Bookworm) released on December 5, 2023, does not work well with this installation.
 For best results, use a Raspberry Pi 4 (not a Raspberry Pi 5) and use the legacy 64-bit OS.
 Instructions are in the Important - Please Read file on this repository.
 
 DaVinci now uses Gemini Pro.
-
-Feb. 23, 2024 Update - I added an alternative voice to DaVinci that uses OpenAI’s text-to-speech model instead of Amazon Polly.  The alternative file is called DaVinciAltVoice.py.  If you decide to you use this version, you do not need to create an AWS account.  In the rest of the instructions, you can skip “pip3 install boto” and “pip3 install awscli” and all of step 3 for configuring the AWS interface.  Substitute “DaVinciAltVoice.py” for “DaVinci.py” everywhere it appears in the instructions.
-
+I made this change because OpenAI's API isn't great, and it may require payment, unlike Google Gemini. Get a Google AI Studio API key here: https://aistudio.google.com/app/apikey
  
-
+]([url](https://aistudio.google.com/app/apikey))
 ![DaVinci Small](https://user-images.githubusercontent.com/22980908/233852733-088f6053-4a10-4ac4-ac80-babd44125cce.jpg)
 
 <img width="653" alt="1" src="https://user-images.githubusercontent.com/22980908/233854978-c6c8ac2e-517a-4b27-ba74-5b4a9d4827fc.png">
