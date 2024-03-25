@@ -4,6 +4,7 @@
 
 import boto3
 import openai
+import google.generativeai as genai
 import os
 import pvcobra
 import pvleopard
@@ -49,11 +50,14 @@ porcupine = None
 recorder = None
 wav_file = None
 
-GPT_model = "gpt-4" # most capable GPT model and optimized for chat.  You can substitute with gpt-3.5-turbo for lower cost and latency.
-openai.api_key = "put your secret API key between these quotation marks"
-pv_access_key= "put your secret access key between these quotation marks"
-
-client = OpenAI(api_key=openai.api_key)
+GPT_model = "gpt-3.5" # most capable GPT model and optimized for chat.  You can substitute with gpt-3.5-turbo for lower cost and latency.
+openai.api_key = "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"
+pv_access_key= "HNex0nMrWBS1KTShOjvq9DTRDRSR5ngSaAsaJpPmJzlZpL6tl4bPAg=="
+genai_key = "AIzaSyCU5rlOacpNMVWZB22EARCL4DLBQPG-SfI"
+genai.configure(api_key = genai_key)
+client = genai.GenerativeModel('gemini-pro')
+client.max_tokens = 30
+chat = client.start_chat()
 
 prompt = ["How may I assist you?",
     "How may I help?",
@@ -67,18 +71,36 @@ prompt = ["How may I assist you?",
 chat_log=[
     {"role": "system", "content": "Your name is DaVinci. You are a helpful assistant. If asked about yourself, you include your name in your response."},
     ]
-
+safe = [
+    {
+        "category": "HARM_CATEGORY_DANGEROUS",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_NONE",
+    },
+]
+chat.history = [{"role": "user", "parts":'You are named DaVinci. You are a helpful voice assistant running on a raspberry pi 4. Answer my prompts in 1-3 sentences unless specified otherwise (such as being told to write an essay or a letter).'}, {"role": "model", "parts":"ok!"}]
 def ChatGPT(query):
-    user_query = [
-        {"role": "user", "content": query},
-        ]         
-    send_query = (chat_log + user_query)
-    response = client.chat.completions.create(
-    model=GPT_model,
-    messages=send_query
-    )
-    answer = response.choices[0].message.content
-    chat_log.append({"role": "assistant", "content": answer})
+    try:
+        answer = chat.send_message(query, safety_settings = safe)
+        answer = answer.candidates[0].content.parts[0].text.replace("*", "")
+    except Exception as e:
+        answer = "Something went wrong. It's possible that it was an issue with the safety filters. Try another prompt."
+
     return answer
     
 def responseprinter(chat):
@@ -106,7 +128,7 @@ def append_clear_countdown():
 def voice(chat):
    
     voiceResponse = polly.synthesize_speech(Text=chat, OutputFormat="mp3",
-                    VoiceId="Matthew") #other options include Amy, Joey, Nicole, Raveena and Russell
+                    VoiceId="Amy") #other options include Amy, Joey, Nicole, Raveena and Russell
     if "AudioStream" in voiceResponse:
         with voiceResponse["AudioStream"] as stream:
             output_file = "speech.mp3"
@@ -149,10 +171,10 @@ def fade_leds(event):
         
 def wake_word():
     
-    keywords = ["computer", "jarvis", "DaVinci"]
+    keywords = ["computer", "hey siri", "ok google", "hey google", "terminator"]
     porcupine = pvporcupine.create(keywords=keywords,
                             access_key=pv_access_key,
-                            sensitivities=[0.1, 0.1, 0.1], #from 0 to 1.0 - a higher number reduces the miss rate at the cost of increased false alarms
+                            sensitivities=[0.1, 0.1, 0.1, 0.1, 0.1], #from 0 to 1.0 - a higher number reduces the miss rate at the cost of increased false alarms
                                    )
     devnull = os.open(os.devnull, os.O_WRONLY)
     old_stderr = os.dup(2)
@@ -313,7 +335,7 @@ try:
             print(transcript)
 #            voice(transcript) # uncomment to have DaVinci repeat what it heard
             (res) = ChatGPT(transcript)
-            print("\nChatGPT's response is:\n")        
+            print("\nGemini's response is:\n")        
             t1 = threading.Thread(target=voice, args=(res,))
             t2 = threading.Thread(target=responseprinter, args=(res,))
             t1.start()
@@ -328,7 +350,7 @@ try:
             recorder = None
 
         except openai.APIError as e:
-            print("\nThere was an API error.  Please try again in a few minutes.")
+            print(f"\nThere was an API error.  Please try again in a few minutes. {e}")
             voice("\nThere was an A P I error.  Please try again in a few minutes.")
             event.set()
             GPIO.output(led1_pin, GPIO.LOW)
@@ -370,6 +392,9 @@ try:
             o.delete
             recorder = None
             break
+        except Exception as e:
+            print('something went wrong.')
+            voice('something went wrong.')
      
 except KeyboardInterrupt:
     print("\nExiting ChatGPT Virtual Assistant")
