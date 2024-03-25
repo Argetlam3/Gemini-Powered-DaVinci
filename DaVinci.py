@@ -50,13 +50,11 @@ porcupine = None
 recorder = None
 wav_file = None
 
-GPT_model = "gpt-3.5" # most capable GPT model and optimized for chat.  You can substitute with gpt-3.5-turbo for lower cost and latency.
-openai.api_key = "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"
-pv_access_key= "HNex0nMrWBS1KTShOjvq9DTRDRSR5ngSaAsaJpPmJzlZpL6tl4bPAg=="
-genai_key = "AIzaSyCU5rlOacpNMVWZB22EARCL4DLBQPG-SfI"
+pv_access_key= "[your picovoice access key]"
+genai_key = "[your google api key]"
 genai.configure(api_key = genai_key)
 client = genai.GenerativeModel('gemini-pro')
-client.max_tokens = 30
+client.max_tokens = 30 #more tokens=longer response
 chat = client.start_chat()
 
 prompt = ["How may I assist you?",
