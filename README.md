@@ -6,8 +6,6 @@ Instructions are in the Important - Please Read file on this repository.
 
 DaVinci now uses Gemini Pro.
 I made this change because OpenAI's API isn't great, and it may require payment, unlike Google Gemini. Get a Google AI Studio API key here: https://aistudio.google.com/app/apikey
- 
-]([url](https://aistudio.google.com/app/apikey))
 ![DaVinci Small](https://user-images.githubusercontent.com/22980908/233852733-088f6053-4a10-4ac4-ac80-babd44125cce.jpg)
 
 <img width="653" alt="1" src="https://user-images.githubusercontent.com/22980908/233854978-c6c8ac2e-517a-4b27-ba74-5b4a9d4827fc.png">
