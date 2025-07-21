@@ -1,7 +1,4 @@
-**IMPORTANT: Italian support is currently not available. I will, however, be implementing it soon.**
 Also: I recommend using a virtual enviornment to install the packages and run the script, otherwise it may not work.
-Raspberry Pi’s newest OS (Bookworm) released on December 5, 2023, does not work well with this installation.
-For best results, use a Raspberry Pi 4 (not a Raspberry Pi 5) and use the legacy 64-bit OS.
 Instructions are in the Important - Please Read file on this repository.
 
 DaVinci now uses Gemini Pro.
